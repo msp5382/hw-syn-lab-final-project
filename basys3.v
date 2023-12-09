@@ -60,33 +60,24 @@ module top (
   wire w_p_tick;
   wire [9:0] w_x, w_y;
   reg [11:0] reg_rgb;
+  wire [3:0] text_on;
+  wire [11:0] text_rgb;
   
-  // screen buffer 640x480
-  reg [11:0] screen [0:640]; // 640x480 1D vector
-  
-  assign rgb = reg_rgb;
-
-  integer i;
-  initial begin
-    for (i = 0; i < 320; i = i + 1) begin
-      screen[i] = 12'hF00;
-    end
-    
-    for (i = 320; i < 640; i = i + 1) begin
-      screen[i] = 12'h0FF;
-    end
-  end
-
+  // Combine the text RGB output with the background
   always @(posedge clk) begin
-    if (w_p_tick)
-      reg_rgb <= screen[w_x];
+    if (w_vid_on) begin
+      if (text_on)
+        reg_rgb <= text_rgb;
+      else
+        reg_rgb <= 12'h000; // black background
+    end
   end
 
+  assign rgb = reg_rgb;
 
   always @(posedge clk_bufg) begin
     if (!resetn) begin
       gpio <= 0;
-      gpio2 <= 0;
     end else begin
       iomem_ready <= 0;
       if (iomem_valid && !iomem_ready) begin
@@ -98,14 +89,18 @@ module top (
           if (iomem_wstrb[2]) gpio[23:16] <= iomem_wdata[23:16];
           if (iomem_wstrb[3]) gpio[31:24] <= iomem_wdata[31:24];
         end
-        if (iomem_addr[31:24] == 8'h05) begin
-          iomem_ready <= 1;
-          if (iomem_wstrb[0] && iomem_wstrb[1]) screen[iomem_wdata[9:0]] <= iomem_wdata[31:20];
-        end
       end
     end
   end
   
+  pong_text pong_text_unit(
+      .clk(clk),
+      .x(w_x),
+      .y(w_y),
+      .text_on(text_on),
+      .text_rgb(text_rgb)
+  );
+
   vga_controller vga_unit(
         .clk_100MHz(clk),
         .reset(reset),
