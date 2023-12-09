@@ -16,19 +16,24 @@ module pong_text(
     
    // instantiate ascii rom
    ascii_rom ascii_unit(.clk(clk), .addr(rom_addr), .data(ascii_word));
-   
-   assign text_on_top = (y >= 96) && (y < 16+96) && (x >= 280) && (x < 300+8*5);
-   assign row_addr = y[3:0];
-   assign bit_addr = x[2:0];
-   always @*
-    case(x[10:3])
-        7'b0100101 : char_addr = 7'h30;     // 0
-        7'b0100110 : char_addr = 7'h30;     // 0
-        7'b0100111 : char_addr = 7'h00;     // spaceC
-        7'b0101000 : char_addr = 7'h30;     // 0
-        7'b0101001 : char_addr = 7'h30;     // 0
-       default : char_addr = 7'h00;   // spaces
-    endcase
+
+
+    assign text_on_top = (y[9:6] == 3) && (5 <= x[9:5]) && (x[9:5] <= 13);
+    assign row_addr = y[5:2];
+    assign bit_addr = x[4:2];
+    always @*
+        case(x[8:5])
+            4'h5 : char_addr = 7'h30;     // G
+            4'h6 : char_addr = 7'h30;     // A
+            4'h7 : char_addr = 7'h30;     // M
+            4'h8 : char_addr = 7'h30;     // E
+            4'h9 : char_addr = 7'h00;     //
+            4'hA : char_addr = 7'h30;     // O
+            4'hB : char_addr = 7'h30;     // V
+            4'hC : char_addr = 7'h30;     // E
+            default : char_addr = 7'h30;  // R
+        endcase
+    
     
     // mux for ascii ROM addresses and rgb
     always @* begin
@@ -37,7 +42,7 @@ module pong_text(
             char_addr = char_addr;
             bit_addr = bit_addr;
             if(ascii_bit)
-                text_rgb = 12'hFFF;
+                text_rgb = 12'h4C8C66;
         end
     end
     
