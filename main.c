@@ -45,18 +45,18 @@ void main()
     w_x_buf = 0x0;
 	while (1)
 	{
-        w_y_buf++
+        w_y_buf++;
         if (w_y_buf == VD)
         {
             w_y_buf = 0;
         }
-        w_x_buf++
+        w_x_buf++;
         if (w_x_buf == HD)
         {
             w_x_buf = 0;
         }
     }
-
+}
 
 // static void screen(void)
 // {
