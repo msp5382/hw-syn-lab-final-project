@@ -42,7 +42,7 @@ module pong_text(
             char_addr = char_addr;
             bit_addr = bit_addr;
             if(ascii_bit)
-                text_rgb = 12'h4C8C66;
+                text_rgb = 12'h4FB;
         end
     end
     

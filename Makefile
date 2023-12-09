@@ -9,7 +9,8 @@ SOURCES := ${current_dir}/picosoc_noflash.v \
            ${current_dir}/progmem.v \
 		   ${current_dir}/vga_controller.v \
 		   ${current_dir}/render.v \
-			${current_dir}/ascii_rom.v \
+		   ${current_dir}/ascii_rom.v \
+		   ${current_dir}/game_render.v
 
 SDC := ${current_dir}/picosoc.sdc
 

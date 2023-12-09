@@ -63,17 +63,42 @@ module top (
   wire [3:0] text_on;
   wire [11:0] text_rgb;
   
-  // Combine the text RGB output with the background
+  // Mock positions for testing
+  reg [9:0] paddle_left_pos = 10'd150;
+  reg [9:0] paddle_right_pos = 10'd300;
+  reg [9:0] ball_pos_x = 10'd120;
+  reg [9:0] ball_pos_y = 10'd240;
+  wire [3:0] game_on;
+  wire [11:0] game_rgb;
+  
+  // Combine the text RGB output with the background and game rendering
   always @(posedge clk) begin
-    if (w_vid_on) begin
+    if (~w_vid_on)
+      reg_rgb <= 12'h000; // black background
+    else
       if (text_on)
         reg_rgb <= text_rgb;
+      else if (game_on)
+        reg_rgb <= game_rgb;
+      else if (text_on && game_on)
+        reg_rgb <= game_rgb;
       else
         reg_rgb <= 12'h000; // black background
-    end
   end
 
   assign rgb = reg_rgb;
+
+  pong_game_renderer pong_game_renderer_unit(
+      .clk(clk),
+      .paddle_left_pos(paddle_left_pos),
+      .paddle_right_pos(paddle_right_pos),
+      .ball_pos_x(ball_pos_x),
+      .ball_pos_y(ball_pos_y),
+      .game_on(game_on),
+      .game_rgb(game_rgb),
+      .x(w_x),
+      .y(w_y)
+  );
 
   always @(posedge clk_bufg) begin
     if (!resetn) begin
