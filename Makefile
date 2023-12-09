@@ -6,7 +6,8 @@ TOP := top
 SOURCES := ${current_dir}/picosoc_noflash.v \
            ${current_dir}/picorv32.v \
            ${current_dir}/simpleuart.v \
-           ${current_dir}/progmem.v
+           ${current_dir}/progmem.v \
+		   ${current_dir}/vga_controller.v \
 
 SDC := ${current_dir}/picosoc.sdc
 
