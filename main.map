@@ -9,45 +9,45 @@ RAM              0x0000000000000000 0x0000000000000800 xrw
 Linker script and memory map
 
 
-.text           0x0000000000100000      0x14c
+.text           0x0000000000100000      0x208
                 0x0000000000100000                . = ALIGN (0x4)
  *(.text)
- .text          0x0000000000100000       0xd4 /tmp/ccsW3Dz1.o
- .text          0x00000000001000d4       0x78 /tmp/cc7nkJ44.o
+ .text          0x0000000000100000       0xd4 /tmp/ccRoLODM.o
+ .text          0x00000000001000d4      0x134 /tmp/cckYwDbL.o
                 0x00000000001000d4                main
  *(.text*)
  *(.rodata)
  *(.rodata*)
  *(.srodata)
  *(.srodata*)
-                0x000000000010014c                . = ALIGN (0x4)
-                0x000000000010014c                _etext = .
-                0x000000000010014c                _sidata = _etext
+                0x0000000000100208                . = ALIGN (0x4)
+                0x0000000000100208                _etext = .
+                0x0000000000100208                _sidata = _etext
 
-.rela.dyn       0x000000000010014c        0x0
- .rela.text     0x000000000010014c        0x0 /tmp/ccsW3Dz1.o
+.rela.dyn       0x0000000000100208        0x0
+ .rela.text     0x0000000000100208        0x0 /tmp/ccRoLODM.o
 
-.data           0x0000000000000000        0x4 load address 0x000000000010014c
+.data           0x0000000000000000        0x4 load address 0x0000000000100208
                 0x0000000000000000                . = ALIGN (0x4)
                 0x0000000000000000                _sdata = .
                 0x0000000000000000                _ram_start = .
                 0x0000000000000000                . = ALIGN (0x4)
  *(.data)
- .data          0x0000000000000000        0x0 /tmp/ccsW3Dz1.o
- .data          0x0000000000000000        0x0 /tmp/cc7nkJ44.o
+ .data          0x0000000000000000        0x0 /tmp/ccRoLODM.o
+ .data          0x0000000000000000        0x0 /tmp/cckYwDbL.o
  *(.data*)
  *(.sdata)
- .sdata         0x0000000000000000        0x4 /tmp/cc7nkJ44.o
+ .sdata         0x0000000000000000        0x4 /tmp/cckYwDbL.o
  *(.sdata*)
                 0x0000000000000004                . = ALIGN (0x4)
                 0x0000000000000004                _edata = .
 
-.bss            0x0000000000000004        0x0 load address 0x0000000000100150
+.bss            0x0000000000000004        0x0 load address 0x000000000010020c
                 0x0000000000000004                . = ALIGN (0x4)
                 0x0000000000000004                _sbss = .
  *(.bss)
- .bss           0x0000000000000004        0x0 /tmp/ccsW3Dz1.o
- .bss           0x0000000000000004        0x0 /tmp/cc7nkJ44.o
+ .bss           0x0000000000000004        0x0 /tmp/ccRoLODM.o
+ .bss           0x0000000000000004        0x0 /tmp/cckYwDbL.o
  *(.bss*)
  *(.sbss)
  *(.sbss*)
@@ -58,17 +58,17 @@ Linker script and memory map
 .heap           0x0000000000000004        0x0
                 0x0000000000000004                . = ALIGN (0x4)
                 0x0000000000000004                _heap_start = .
-LOAD /tmp/ccsW3Dz1.o
-LOAD /tmp/cc7nkJ44.o
+LOAD /tmp/ccRoLODM.o
+LOAD /tmp/cckYwDbL.o
 OUTPUT(main.elf elf32-littleriscv)
 
 .riscv.attributes
                 0x0000000000000000       0x21
  .riscv.attributes
-                0x0000000000000000       0x1f /tmp/ccsW3Dz1.o
+                0x0000000000000000       0x1f /tmp/ccRoLODM.o
  .riscv.attributes
-                0x000000000000001f       0x21 /tmp/cc7nkJ44.o
+                0x000000000000001f       0x21 /tmp/cckYwDbL.o
 
 .comment        0x0000000000000000       0x15
- .comment       0x0000000000000000       0x15 /tmp/cc7nkJ44.o
+ .comment       0x0000000000000000       0x15 /tmp/cckYwDbL.o
                                          0x16 (size before relaxing)

@@ -24,6 +24,8 @@ module top (
     output tx,
     input  rx,
 
+    input  [3:0] btn,
+
     input  [15:0] sw,
     output [15:0] led,
 
@@ -65,7 +67,7 @@ module top (
   
   // Mock positions for testing
   reg [9:0] paddle_left_pos = 10'd150;
-  reg [9:0] paddle_right_pos = 10'd300;
+  reg [9:0] paddle_right_pos = 10'd150;
   reg [9:0] ball_pos_x = 10'd120;
   reg [9:0] ball_pos_y = 10'd240;
   wire [3:0] game_on;
@@ -103,6 +105,10 @@ module top (
   always @(posedge clk_bufg) begin
     if (!resetn) begin
       gpio <= 0;
+      paddle_left_pos <= 10'd150; // Reset paddle position on reset
+      paddle_right_pos <= 10'd150; // Reset paddle position on reset
+      ball_pos_x <= 10'd0; // Reset ball position on reset
+      ball_pos_y <= 10'd0; // Reset ball position on reset
     end else begin
       iomem_ready <= 0;
       if (iomem_valid && !iomem_ready) begin
@@ -113,6 +119,38 @@ module top (
           if (iomem_wstrb[1]) gpio[15:8] <= iomem_wdata[15:8];
           if (iomem_wstrb[2]) gpio[23:16] <= iomem_wdata[23:16];
           if (iomem_wstrb[3]) gpio[31:24] <= iomem_wdata[31:24];
+        end else if (iomem_addr[31:24] == 8'h04) begin
+          iomem_ready <= 1;
+          iomem_rdata <= {22'd0, paddle_left_pos};
+          if (iomem_wstrb[0]) paddle_left_pos[7:0] <= iomem_wdata[7:0];
+          if (iomem_wstrb[1]) paddle_left_pos[9:8] <= iomem_wdata[9:8];
+        end else if (iomem_addr[31:24] == 8'h05) begin
+          iomem_ready <= 1;
+          iomem_rdata <= {22'd0, paddle_right_pos};
+          if (iomem_wstrb[0]) paddle_right_pos[7:0] <= iomem_wdata[7:0];
+          if (iomem_wstrb[1]) paddle_right_pos[9:8] <= iomem_wdata[9:8];
+        end else if (iomem_addr[31:24] == 8'h06) begin
+          iomem_ready <= 1;
+          iomem_rdata <= {22'd0, ball_pos_x};
+          if (iomem_wstrb[0]) ball_pos_x[7:0] <= iomem_wdata[7:0];
+          if (iomem_wstrb[1]) ball_pos_x[9:8] <= iomem_wdata[9:8];
+        end else if (iomem_addr[31:24] == 8'h07) begin
+          iomem_ready <= 1;
+          iomem_rdata <= {22'd0, ball_pos_y};
+          if (iomem_wstrb[0]) ball_pos_y[7:0] <= iomem_wdata[7:0];
+          if (iomem_wstrb[1]) ball_pos_y[9:8] <= iomem_wdata[9:8];
+        end else if (iomem_addr[31:24] == 8'h08) begin
+          iomem_ready <= 1;
+          iomem_rdata <= {31'd0, btn[0]};
+        end else if (iomem_addr[31:24] == 8'h09) begin
+          iomem_ready <= 1;
+          iomem_rdata <= {31'd0, btn[1]};
+        end else if (iomem_addr[31:24] == 8'h0A) begin
+          iomem_ready <= 1;
+          iomem_rdata <= {31'd0, btn[2]};
+        end else if (iomem_addr[31:24] == 8'h0B) begin
+          iomem_ready <= 1;
+          iomem_rdata <= {31'd0, btn[3]};
         end
       end
     end

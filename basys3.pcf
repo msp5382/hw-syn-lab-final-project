@@ -69,3 +69,8 @@ set_io hsync P19
 set_io vsync R19
 
 set_io reset U18
+
+set_io btn[0] T18
+set_io btn[1] U17
+set_io btn[2] W19
+set_io btn[3] T17
