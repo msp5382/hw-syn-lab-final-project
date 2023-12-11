@@ -2,6 +2,7 @@
 module pong_text(
     input clk,
     input [9:0] x, y,
+    input [3:0] p1_score_d1, p1_score_d2, p2_score_d1, p2_score_d2,
     output [3:0] text_on,
     output reg [11:0] text_rgb
     );
@@ -23,15 +24,15 @@ module pong_text(
     assign bit_addr = x[4:2];
     always @*
         case(x[8:5])
-            4'h5 : char_addr = 7'h30;     // G
-            4'h6 : char_addr = 7'h30;     // A
-            4'h7 : char_addr = 7'h30;     // M
-            4'h8 : char_addr = 7'h30;     // E
-            4'h9 : char_addr = 7'h00;     //
-            4'hA : char_addr = 7'h30;     // O
-            4'hB : char_addr = 7'h30;     // V
-            4'hC : char_addr = 7'h30;     // E
-            default : char_addr = 7'h30;  // R
+            4'h5 : char_addr = 7'h00;
+            4'h6 : char_addr = 7'h00;
+            4'h7 : char_addr = {3'b011,p1_score_d1};
+            4'h8 : char_addr = {3'b011,p1_score_d2};
+            4'h9 : char_addr = 7'h00;
+            4'hA : char_addr = 7'h00;
+            4'hB : char_addr = {3'b011,p2_score_d1};
+            4'hC : char_addr = {3'b011,p2_score_d2};
+            default : char_addr = 7'h00;
         endcase
     
     

@@ -70,28 +70,31 @@ module top (
   reg [9:0] paddle_right_pos = 10'd150;
   reg [9:0] ball_pos_x = 10'd120;
   reg [9:0] ball_pos_y = 10'd240;
+  reg [3:0] p1_score_d1 = 4'd0;
+  reg [3:0] p1_score_d2 = 4'd0;
+  reg [3:0] p2_score_d1 = 4'd0;
+  reg [3:0] p2_score_d2 = 4'd0;
   wire [3:0] game_on;
   wire [11:0] game_rgb;
   
   // Combine the text RGB output with the background and game rendering
-  always @*
+  always @(posedge clk_bufg)
     if (~w_vid_on)
       reg_rgb <= 12'h000; // black background
     else
-      if (text_on)
+      if(text_on && game_on)
+        if (game_rgb == 12'h000)
+          reg_rgb <= text_rgb;
+        else
+          reg_rgb <= game_rgb;
+      else if (text_on)
         reg_rgb <= text_rgb;
       else if (game_on)
         reg_rgb <= game_rgb;
-      else if (text_on && game_on)
-        reg_rgb <= game_rgb;
       else
-        reg_rgb <= 12'h0FF; // black background
-
-    always @(posedge clk)
-      begin
-          if(w_p_tick)
-              rgb <= reg_rgb;
-      end
+        reg_rgb <= 12'h000; // black background
+    
+  assign rgb = reg_rgb;
 
   pong_game_renderer pong_game_renderer_unit(
       .clk(clk_bufg),
@@ -106,23 +109,21 @@ module top (
   );
 
   always @(posedge clk_bufg) begin
-    if (!resetn) begin
+    if (reset) begin
       gpio <= 0;
       paddle_left_pos <= 10'd0; // Reset paddle position on reset
       paddle_right_pos <= 10'd0; // Reset paddle position on reset
       ball_pos_x <= 10'd0; // Reset ball position on reset
       ball_pos_y <= 10'd0; // Reset ball position on reset
+      p1_score_d1 <= 4'd0; // Reset player 1 score on reset
+      p1_score_d2 <= 4'd0; // Reset player 1 score on reset
+      p2_score_d1 <= 4'd0; // Reset player 2 score on reset
+      p2_score_d2 <= 4'd0; // Reset player 2 score on reset
+
     end else begin
       iomem_ready <= 0;
       if (iomem_valid && !iomem_ready) begin
-        if (iomem_addr[31:24] == 8'h03) begin
-          iomem_ready <= 1;
-          iomem_rdata <= {sw, gpio[15:0]};
-          if (iomem_wstrb[0]) gpio[7:0] <= iomem_wdata[7:0];
-          if (iomem_wstrb[1]) gpio[15:8] <= iomem_wdata[15:8];
-          if (iomem_wstrb[2]) gpio[23:16] <= iomem_wdata[23:16];
-          if (iomem_wstrb[3]) gpio[31:24] <= iomem_wdata[31:24];
-        end else if (iomem_addr[31:24] == 8'h04) begin
+        if (iomem_addr[31:24] == 8'h04) begin
           iomem_ready <= 1;
           iomem_rdata <= {22'd0, paddle_left_pos};
           if (iomem_wstrb[0]) paddle_left_pos[7:0] <= iomem_wdata[7:0];
@@ -154,6 +155,22 @@ module top (
         end else if (iomem_addr[31:24] == 8'h0B) begin
           iomem_ready <= 1;
           iomem_rdata <= {31'd0, btn[3]};
+        end else if (iomem_addr[31:24] == 8'h0C) begin
+          iomem_ready <= 1;
+          iomem_rdata <= {28'd0, p1_score_d1};
+          if (iomem_wstrb[0]) p1_score_d1[3:0] <= iomem_wdata[3:0];
+        end else if (iomem_addr[31:24] == 8'h0D) begin
+          iomem_ready <= 1;
+          iomem_rdata <= {28'd0, p1_score_d2};
+          if (iomem_wstrb[0]) p1_score_d2[3:0] <= iomem_wdata[3:0];
+        end else if (iomem_addr[31:24] == 8'h0E) begin
+          iomem_ready <= 1;
+          iomem_rdata <= {28'd0, p2_score_d1};
+          if (iomem_wstrb[0]) p2_score_d1[3:0] <= iomem_wdata[3:0];
+        end else if (iomem_addr[31:24] == 8'h0F) begin
+          iomem_ready <= 1;
+          iomem_rdata <= {28'd0, p2_score_d2};
+          if (iomem_wstrb[0]) p2_score_d2[3:0] <= iomem_wdata[3:0];
         end
       end
     end
@@ -163,6 +180,10 @@ module top (
       .clk(clk_bufg),
       .x(w_x),
       .y(w_y),
+      .p1_score_d1(p1_score_d1), 
+      .p1_score_d2(p1_score_d2), 
+      .p2_score_d1(p2_score_d1), 
+      .p2_score_d2(p2_score_d2),
       .text_on(text_on),
       .text_rgb(text_rgb)
   );
@@ -179,7 +200,7 @@ module top (
 
   picosoc_noflash soc (
       .clk   (clk_bufg),
-      .resetn(resetn),
+      .resetn(~reset),
 
       .ser_tx(tx),
       .ser_rx(rx),

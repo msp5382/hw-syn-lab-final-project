@@ -25,16 +25,6 @@ module pong_game_renderer(
     always @(posedge clk) begin
         game_rgb <= 12'h000; // Default to black
         game_on <= 1'b0;
-
-        if(y >= 0 && y < 2) begin
-            game_rgb <= 12'hFFF; // White color for top border
-            game_on <= 1'b1;
-        end
-
-        if(y >= 478 && y < 480) begin
-            game_rgb <= 12'hFFF; // White color for top border
-            game_on <= 1'b1;
-        end
         
         // Render left paddle
         if (paddle_left_pos <= y && y < paddle_left_pos + PADDLE_HEIGHT && x > 10 && x <= PADDLE_WIDTH + 10) begin

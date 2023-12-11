@@ -1,0 +1,6 @@
+{
+  "files.associations": {
+    "*.osq": "sql",
+    "stdint.h": "c"
+  }
+}
