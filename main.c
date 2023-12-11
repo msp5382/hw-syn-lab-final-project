@@ -41,10 +41,10 @@ static uint32_t delay = GAME_DELAY;
 
 void main()
 {
-	left_paddle = 0x0;
-    right_paddle = 0x0;
-    ball_x = 0x0;
-    ball_y = 0x0;
+	left_paddle = 25;
+    right_paddle = 25;
+    ball_x = 100;
+    ball_y = 100;
 	while (1)
 	{
         screen();
@@ -60,16 +60,23 @@ static void screen(void)
 
         // game loop
         // Update paddle positions based on button inputs
-        if(btn_up == 1 && left_paddle > PADDLE_HEIGHT)
+        if(btn_up == 1 && left_paddle > 0)
             left_paddle--;
         if(btn_down == 1 && left_paddle < 480 - PADDLE_HEIGHT)
             left_paddle++;
 
-        if(btn_left == 1 && right_paddle > PADDLE_HEIGHT)
+        if(btn_left == 1 && right_paddle > 0)
             right_paddle--;
         if(btn_right == 1 && right_paddle < 480 - PADDLE_HEIGHT)
             right_paddle++;
         
+        // ball_x++;
+        // if(ball_x > 640)
+        //     ball_y++;
+        //     ball_x = 0;
+            
+        // if(ball_y > 480)
+        //     ball_y = 0;
 
         // // Update ball position based on last position and direction
         // // Ball movement variables

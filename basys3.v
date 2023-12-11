@@ -74,7 +74,7 @@ module top (
   wire [11:0] game_rgb;
   
   // Combine the text RGB output with the background and game rendering
-  always @(posedge clk) begin
+  always @*
     if (~w_vid_on)
       reg_rgb <= 12'h000; // black background
     else
@@ -85,13 +85,16 @@ module top (
       else if (text_on && game_on)
         reg_rgb <= game_rgb;
       else
-        reg_rgb <= 12'h000; // black background
-  end
+        reg_rgb <= 12'h0FF; // black background
 
-  assign rgb = reg_rgb;
+    always @(posedge clk)
+      begin
+          if(w_p_tick)
+              rgb <= reg_rgb;
+      end
 
   pong_game_renderer pong_game_renderer_unit(
-      .clk(clk),
+      .clk(clk_bufg),
       .paddle_left_pos(paddle_left_pos),
       .paddle_right_pos(paddle_right_pos),
       .ball_pos_x(ball_pos_x),
@@ -105,8 +108,8 @@ module top (
   always @(posedge clk_bufg) begin
     if (!resetn) begin
       gpio <= 0;
-      paddle_left_pos <= 10'd150; // Reset paddle position on reset
-      paddle_right_pos <= 10'd150; // Reset paddle position on reset
+      paddle_left_pos <= 10'd0; // Reset paddle position on reset
+      paddle_right_pos <= 10'd0; // Reset paddle position on reset
       ball_pos_x <= 10'd0; // Reset ball position on reset
       ball_pos_y <= 10'd0; // Reset ball position on reset
     end else begin
@@ -157,7 +160,7 @@ module top (
   end
   
   pong_text pong_text_unit(
-      .clk(clk),
+      .clk(clk_bufg),
       .x(w_x),
       .y(w_y),
       .text_on(text_on),
@@ -165,7 +168,7 @@ module top (
   );
 
   vga_controller vga_unit(
-        .clk_100MHz(clk),
+        .clk_100MHz(clk_bufg),
         .reset(reset),
         .video_on(w_vid_on),
         .hsync(hsync),
