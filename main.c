@@ -19,6 +19,51 @@
 #define p2_score_d2 (*(volatile uint32_t*)0x0F000000)
 
 /* Private functions */
+
+#define reg_uart_clkdiv (*(volatile uint32_t*)0x02000004)
+#define reg_uart_data (*(volatile uint32_t*)0x02000008)
+
+
+void putchar(char c)
+{
+	if (c == '\n')
+		putchar('\r');
+	reg_uart_data = c;
+}
+
+void print(const char *p)
+{
+	while (*p)
+		putchar(*(p++));
+}
+
+
+char getchar_prompt(char *prompt)
+{
+	int32_t c = -1;
+
+	uint32_t cycles_begin, cycles_now, cycles;
+	__asm__ volatile ("rdcycle %0" : "=r"(cycles_begin));
+
+	if (prompt)
+		print(prompt);
+
+	while (c == -1) {
+		__asm__ volatile ("rdcycle %0" : "=r"(cycles_now));
+		cycles = cycles_now - cycles_begin;
+		if (cycles > 12000000) {
+			if (prompt)
+				print(prompt);
+			cycles_begin = cycles_now;
+		}
+		c = reg_uart_data;
+	}
+
+	return c;
+}
+
+// --------------------------------------------------------
+
 static void screen(void);
 
 #define GAME_DELAY   4000
@@ -34,6 +79,20 @@ static int ball_dy = 1;
 
 void main()
 {
+	
+    // 100MHz at 9600 baudrate
+    reg_uart_clkdiv = 651;
+
+    print("\n");
+	print("  ____  _          ____         ____\n");
+	print(" |  _ \\(_) ___ ___/ ___|  ___  / ___|\n");
+	print(" | |_) | |/ __/ _ \\___ \\ / _ \\| |\n");
+	print(" |  __/| | (_| (_) |__) | (_) | |___\n");
+	print(" |_|   |_|\\___\\___/____/ \\___/ \\____|\n");
+	print("\n");
+
+    while(getchar_prompt("Press any key to start the game\n") != '\r'){}
+
 	left_paddle = 25;
     right_paddle = 25;
     ball_x = 100;
@@ -100,10 +159,11 @@ static void screen(void)
         ball_y += ball_dy;
     }
 
+    
+
     if (delay == 0)
     {
         delay = GAME_DELAY;
-
         if(p1_score_d1 == 9 && p1_score_d2 == 9)
         {
             p1_score_d1 = 0;
@@ -119,19 +179,42 @@ static void screen(void)
             p2_score_d1 = 0;
             p2_score_d2 = 0;
         }
-
+        char action = reg_uart_data;
+    
         // game loop
         // Update paddle positions based on button inputs
-        if(btn_up == 1 && left_paddle > 0)
-            left_paddle--;
-        if(btn_down == 1 && left_paddle < 480 - PADDLE_HEIGHT)
-            left_paddle++;
+        if((btn_up == 1 || action == 'a') && left_paddle > 25){
+            if(action == 'a'){
+                left_paddle = left_paddle - 10;
+            }else{
+                left_paddle--;
+            }
+        }
+            
+        if((btn_down == 1|| action == 'z') && left_paddle < 480 - PADDLE_HEIGHT){
+            if(action == 'z'){
+                left_paddle = left_paddle + 10;
+            }else{
+                left_paddle++;
+            }
+        }
 
-        if(btn_left == 1 && right_paddle > 0)
-            right_paddle--;
-        if(btn_right == 1 && right_paddle < 480 - PADDLE_HEIGHT)
-            right_paddle++;
-        
+        if((btn_left == 1|| action == '\'') && right_paddle > 25)
+        {
+            if(action == '\''){
+                right_paddle = right_paddle - 10;
+            }else{
+                right_paddle--;
+            }
+        }
+        if((btn_right == 1|| action == '/') && right_paddle < 480 - PADDLE_HEIGHT)
+        {
+            if(action == '/'){
+                right_paddle = right_paddle + 10;
+            }else{
+                right_paddle++;
+            }
+        }        
         // ball_x++;
         // if(ball_x > 640)
         //     ball_y++;

@@ -2,58 +2,63 @@
 Memory Configuration
 
 Name             Origin             Length             Attributes
-FLASH            0x0000000000100000 0x0000000000000800 xr
+FLASH            0x0000000000100000 0x0000000000001f00 xr
 RAM              0x0000000000000000 0x0000000000000800 xrw
 *default*        0x0000000000000000 0xffffffffffffffff
 
 Linker script and memory map
 
 
-.text           0x0000000000100000      0x5ac
+.text           0x0000000000100000      0x948
                 0x0000000000100000                . = ALIGN (0x4)
  *(.text)
- .text          0x0000000000100000       0xd4 /tmp/ccgIHc8P.o
- .text          0x00000000001000d4      0x4d8 /tmp/ccNyQCaP.o
-                0x00000000001000d4                main
-                0x000000000010013c                is_ball_from_left
-                0x0000000000100164                is_ball_from_right
-                0x000000000010018c                is_ball_collide_paddle_left
-                0x00000000001001f8                is_ball_collide_paddle_right
-                0x0000000000100264                increase_p1_score
-                0x00000000001002b8                increase_p2_score
+ .text          0x0000000000100000       0xd4 /tmp/ccvzfnb7.o
+ .text          0x00000000001000d4      0x788 /tmp/cciHCgV6.o
+                0x00000000001000d4                putchar
+                0x0000000000100124                print
+                0x0000000000100178                getchar_prompt
+                0x0000000000100228                main
+                0x0000000000100314                is_ball_from_left
+                0x000000000010033c                is_ball_from_right
+                0x0000000000100364                is_ball_collide_paddle_left
+                0x00000000001003d0                is_ball_collide_paddle_right
+                0x000000000010043c                increase_p1_score
+                0x0000000000100490                increase_p2_score
  *(.text*)
  *(.rodata)
+ .rodata        0x000000000010085c       0xe9 /tmp/cciHCgV6.o
  *(.rodata*)
  *(.srodata)
  *(.srodata*)
-                0x00000000001005ac                . = ALIGN (0x4)
-                0x00000000001005ac                _etext = .
-                0x00000000001005ac                _sidata = _etext
+                0x0000000000100948                . = ALIGN (0x4)
+ *fill*         0x0000000000100945        0x3 
+                0x0000000000100948                _etext = .
+                0x0000000000100948                _sidata = _etext
 
-.rela.dyn       0x00000000001005ac        0x0
- .rela.text     0x00000000001005ac        0x0 /tmp/ccgIHc8P.o
+.rela.dyn       0x0000000000100948        0x0
+ .rela.text     0x0000000000100948        0x0 /tmp/ccvzfnb7.o
 
-.data           0x0000000000000000       0x10 load address 0x00000000001005ac
+.data           0x0000000000000000       0x10 load address 0x0000000000100948
                 0x0000000000000000                . = ALIGN (0x4)
                 0x0000000000000000                _sdata = .
                 0x0000000000000000                _ram_start = .
                 0x0000000000000000                . = ALIGN (0x4)
  *(.data)
- .data          0x0000000000000000        0x0 /tmp/ccgIHc8P.o
- .data          0x0000000000000000        0x0 /tmp/ccNyQCaP.o
+ .data          0x0000000000000000        0x0 /tmp/ccvzfnb7.o
+ .data          0x0000000000000000        0x0 /tmp/cciHCgV6.o
  *(.data*)
  *(.sdata)
- .sdata         0x0000000000000000       0x10 /tmp/ccNyQCaP.o
+ .sdata         0x0000000000000000       0x10 /tmp/cciHCgV6.o
  *(.sdata*)
                 0x0000000000000010                . = ALIGN (0x4)
                 0x0000000000000010                _edata = .
 
-.bss            0x0000000000000010        0x0 load address 0x00000000001005bc
+.bss            0x0000000000000010        0x0 load address 0x0000000000100958
                 0x0000000000000010                . = ALIGN (0x4)
                 0x0000000000000010                _sbss = .
  *(.bss)
- .bss           0x0000000000000010        0x0 /tmp/ccgIHc8P.o
- .bss           0x0000000000000010        0x0 /tmp/ccNyQCaP.o
+ .bss           0x0000000000000010        0x0 /tmp/ccvzfnb7.o
+ .bss           0x0000000000000010        0x0 /tmp/cciHCgV6.o
  *(.bss*)
  *(.sbss)
  *(.sbss*)
@@ -64,17 +69,17 @@ Linker script and memory map
 .heap           0x0000000000000010        0x0
                 0x0000000000000010                . = ALIGN (0x4)
                 0x0000000000000010                _heap_start = .
-LOAD /tmp/ccgIHc8P.o
-LOAD /tmp/ccNyQCaP.o
+LOAD /tmp/ccvzfnb7.o
+LOAD /tmp/cciHCgV6.o
 OUTPUT(main.elf elf32-littleriscv)
 
 .riscv.attributes
                 0x0000000000000000       0x21
  .riscv.attributes
-                0x0000000000000000       0x1f /tmp/ccgIHc8P.o
+                0x0000000000000000       0x1f /tmp/ccvzfnb7.o
  .riscv.attributes
-                0x000000000000001f       0x21 /tmp/ccNyQCaP.o
+                0x000000000000001f       0x21 /tmp/cciHCgV6.o
 
 .comment        0x0000000000000000       0x15
- .comment       0x0000000000000000       0x15 /tmp/ccNyQCaP.o
+ .comment       0x0000000000000000       0x15 /tmp/cciHCgV6.o
                                          0x16 (size before relaxing)
