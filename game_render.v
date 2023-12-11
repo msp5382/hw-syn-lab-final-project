@@ -55,7 +55,7 @@ module pong_game_renderer(
                 default :     rom_data = 10'b0000000000; // (empty)
             endcase
 
-            if (rom_data[bit_addr[2:0]]) begin
+            if (rom_data[bit_addr[3:0]]) begin
                 game_rgb <= 12'hFFF; // White color for ball
                 game_on <= 1'b1;
             end
