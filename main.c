@@ -35,9 +35,14 @@
 /* Private functions */
 static void screen(void);
 
-#define GAME_DELAY   5000
+#define GAME_DELAY   6000
 #define PADDLE_HEIGHT 50
+#define PADDLE_WIDTH 10
+#define MAX_X 640
+#define MAX_Y 480
 static uint32_t delay = GAME_DELAY;
+static int ball_dx = 1;
+static int ball_dy = 1;
 
 void main()
 {
@@ -78,31 +83,28 @@ static void screen(void)
         // if(ball_y > 480)
         //     ball_y = 0;
 
-        // // Update ball position based on last position and direction
-        // // Ball movement variables
-        // static int ball_dx = 1;
-        // static int ball_dy = 1;
-        // static const int max_x = 640;
-        // static const int max_y = 480;
-        // static const int paddle_width = 10;
-        // static const int paddle_height = 50;
+        ball_x += ball_dx;
+        ball_y += ball_dy;
 
-        // // Update ball position
-        // ball_x += ball_dx;
-        // ball_y += ball_dy;
-
-        // // Check for collisions with walls
         // if (ball_x <= 0 || ball_x >= max_x)
         //     ball_dx = -ball_dx;
-        // if (ball_y <= 0 || ball_y >= max_y)
-        //     ball_dy = -ball_dy;
+        if (ball_y <= 0 || ball_y >= MAX_Y)
+            ball_dy = -ball_dy;
 
-        // // Check for collisions with paddles
-        // if ((ball_dx < 0 && ball_x <= left_paddle + paddle_width && ball_y >= left_paddle && ball_y <= left_paddle + paddle_height) ||
-        //     (ball_dx > 0 && ball_x >= right_paddle - paddle_width && ball_y >= right_paddle && ball_y <= right_paddle + paddle_height))
-        // {
-        //     ball_dx = -ball_dx;
-        // }
+        if ((ball_dx < 0 && ball_x <= left_paddle + PADDLE_WIDTH && ball_y >= left_paddle && ball_y <= left_paddle + PADDLE_HEIGHT) ||
+            (ball_dx > 0 && ball_x >= right_paddle - PADDLE_WIDTH && ball_y >= right_paddle && ball_y <= right_paddle + PADDLE_HEIGHT))
+        {
+            ball_dx = -ball_dx;
+        }
+        
+        if (ball_x <= 0 || ball_x >= MAX_X)
+        {
+            // filp the ball
+            ball_dx = -ball_dx;
+            // spawn the ball in the middle
+            ball_x = MAX_X / 2;
+            ball_y = MAX_Y / 2;
+        }
     }
 }
 
